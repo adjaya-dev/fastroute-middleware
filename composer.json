@@ -1,0 +1,13 @@
+{
+  "name": "mailfire/just",
+  "description": "PHP framework",
+  "require": {
+    "http-interop/http-middleware": "*",
+    "nikic/fast-route": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "": "src"
+    }
+  }
+}
