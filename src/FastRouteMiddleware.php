@@ -10,7 +10,7 @@ class FastRouteMiddleware implements MiddlewareInterface
     private $routes;
     private $notFoundCallable;
 
-    public function construct(array $routes, $notFoundCallable)
+    public function __construct(array $routes, $notFoundCallable)
     {
         $this->routes = $routes;
         $this->notFoundCallable = $notFoundCallable;
