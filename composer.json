@@ -1,6 +1,6 @@
 {
-  "name": "mailfire/just",
-  "description": "PHP framework",
+  "name": "phpset/fastroute-middleware",
+  "description": "Port FastRoute to PSR15 middleware",
   "require": {
     "http-interop/http-middleware": "*",
     "nikic/fast-route": "*"
