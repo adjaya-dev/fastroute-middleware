@@ -19,7 +19,9 @@ class FastRouteMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, DelegateInterface $delegate)
     {
         $method = strtoupper($request->getMethod());
-        $uri = strtolower($request->getUri()->getFragment());
+        $requestUri = $request->getUri();
+        $query = $requestUri->getQuery();
+        $uri = $requestUri->getPath() . ($query ? '?' . $query : '');
 
         // Process routes
         $dispatcher = \FastRoute\simpleDispatcher(function (\FastRoute\RouteCollector $r) {
