@@ -20,11 +20,6 @@ class FastRouteMiddleware implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, DelegateInterface $delegate)
     {
-        $method = strtoupper($request->getMethod());
-        $requestUri = $request->getUri();
-        $query = $requestUri->getQuery();
-        $uri = $requestUri->getPath() . ($query ? '?' . $query : '');
-
         // Process routes
         $dispatcher = \FastRoute\simpleDispatcher(function (\FastRoute\RouteCollector $r) {
             foreach ($this->routes as $route) {
@@ -33,7 +28,8 @@ class FastRouteMiddleware implements MiddlewareInterface
         });
 
         // Dispatch request
-        $routeInfo = $dispatcher->dispatch($method, $uri);
+        $method = strtoupper($request->getMethod());
+        $routeInfo = $dispatcher->dispatch($method, $request->getUri()->getPath());
 
         // Check found
         if ($routeInfo[0] !== \FastRoute\Dispatcher::FOUND) {
