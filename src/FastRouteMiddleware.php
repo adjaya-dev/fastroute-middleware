@@ -7,10 +7,12 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class FastRouteMiddleware implements MiddlewareInterface
 {
+    const HANDLER_ATTRIBUTE = 'request-handler';
+
     private $routes;
     private $notFoundCallable;
 
-    public function __construct(array $routes, $notFoundCallable)
+    public function __construct(array $routes, $notFoundCallable, $processResultCallable = null)
     {
         $this->routes = $routes;
         $this->notFoundCallable = $notFoundCallable;
@@ -38,8 +40,12 @@ class FastRouteMiddleware implements MiddlewareInterface
             return call_user_func_array($this->notFoundCallable, []);
         }
 
-        // Handle and return created Response
-        // no delegate next here
-        return call_user_func_array($routeInfo[1], $routeInfo[2]);
+        // Add params to Request attributes
+        foreach ($routeInfo[2] as $name => $value) {
+            $request = $request->withAttribute($name, $value);
+        }
+        $request = $request->withAttribute(self::HANDLER_ATTRIBUTE, $routeInfo[1]);
+
+        return $delegate->process($request);
     }
 }
