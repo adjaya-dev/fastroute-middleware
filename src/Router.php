@@ -32,16 +32,21 @@ class Router implements MiddlewareInterface
         $method = strtoupper($request->getMethod());
         $routeInfo = $dispatcher->dispatch($method, $request->getUri()->getPath());
 
-        // Check found
-        if ($routeInfo[0] !== \FastRoute\Dispatcher::FOUND) {
-            return call_user_func_array($this->notFoundCallable, []);
+
+        // Add GET params to Request attributes
+        if (isset($routeInfo[2])) {
+            foreach ($routeInfo[2] as $name => $value) {
+                $request = $request->withAttribute($name, $value);
+            }
         }
 
-        // Add params to Request attributes
-        foreach ($routeInfo[2] as $name => $value) {
-            $request = $request->withAttribute($name, $value);
+        // Check found
+        if ($routeInfo[0] !== \FastRoute\Dispatcher::FOUND) {
+            $handler = $this->notFoundCallable;
+        } else {
+            $handler = $routeInfo[1];
         }
-        $request = $request->withAttribute(self::HANDLER_ATTRIBUTE, $routeInfo[1]);
+        $request = $request->withAttribute(self::HANDLER_ATTRIBUTE, $handler);
 
         return $delegate->process($request);
     }
